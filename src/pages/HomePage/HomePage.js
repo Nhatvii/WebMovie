@@ -1,13 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { Modal, ModalBody } from "reactstrap";
 import * as action from "../../redux/action/action";
-import "./HomePage.scss";
 import CardFilm from "./component/CardFilm";
+import ModalVideo from "react-modal-video";
+import "./HomePage.scss";
 import "./scss/typho.scss";
 import "./scss/ultility.scss";
-import './scss/amination.scss';
+import "./scss/amination.scss";
 
 function HomePage(props) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => setIsOpen(!isOpen);
+
   const {
     listFilmHot,
     listFilmDangChieu,
@@ -32,7 +38,13 @@ function HomePage(props) {
   return (
     <div className="container">
       <header className="header">
-        <div className= {props.posterHotFilmFade ? "header__info-film u-fade--right" : "header__info-film"}>
+        <div
+          className={
+            props.posterHotFilmFade
+              ? "header__info-film u-fade--right"
+              : "header__info-film"
+          }
+        >
           <div className="heading-primary u-margin-bottom-small">
             {currentFilmHot.tenPhim}
           </div>
@@ -56,14 +68,23 @@ function HomePage(props) {
           className="header__background-img"
           style={{ backgroundImage: `url(${currentFilmHot.hinhAnh})` }}
         ></div>
-        <div className= {props.posterHotFilmFade ? "header__interact u-fade--right" : "header__interact"}>
+        <div
+          className={
+            props.posterHotFilmFade
+              ? "header__interact u-fade--right"
+              : "header__interact"
+          }
+        >
           <div className="header__interact-component u-inline-block">
             <img
               src={process.env.PUBLIC_URL + "/img/play.png"}
               alt="play"
               className="header__interact-component__img"
             />
-            <button className="header__interact-component__btn header__interact-component__btn--orange__black" />
+            <button
+              className="header__interact-component__btn header__interact-component__btn--orange__black"
+              onClick={() => setIsOpen(true)}
+            />
           </div>
           <div className="header__interact-component u-inline-block">
             <img
@@ -74,9 +95,23 @@ function HomePage(props) {
             <button className="header__interact-component__btn header__interact-component__btn--orange__light" />
           </div>
         </div>
-        <div className= {props.posterHotFilmFade ? "header__description heading-sub-title u-fade--right" : "header__description heading-sub-title"}>
+        <div
+          className={
+            props.posterHotFilmFade
+              ? "header__description heading-sub-title u-fade--right"
+              : "header__description heading-sub-title"
+          }
+        >
           {currentFilmHot.moTa}
         </div>
+        {!(
+          Object.keys(currentFilmHot).length === 0 &&
+          currentFilmHot.constructor === Object
+        ) ? (
+          <ModalVideo channel='youtube' isOpen={isOpen} videoId={currentFilmHot.trailer.slice(currentFilmHot.trailer.lastIndexOf("/") + 1, currentFilmHot.trailer.length)} onClose={() => setIsOpen(false)}/>
+        ) : (
+          <div />
+        )}
       </header>
     </div>
   );
@@ -89,7 +124,7 @@ const mapStateToProps = (state) => {
     listFilmHot: state.movieReducer.listFilmHot,
     currentFilmHot: state.movieReducer.currentFilmHot,
     isLoading: state.movieReducer.isLoading,
-    posterHotFilmFade: state.aminationReducer.posterHotFilmFade
+    posterHotFilmFade: state.aminationReducer.posterHotFilmFade,
   };
 };
 

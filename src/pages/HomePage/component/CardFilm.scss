@@ -1,7 +1,7 @@
 .card{
     display: inline-block;
     transition: all 0.2s;
-
+    cursor: pointer;
     &__img{
         width: 15rem;
         height: 20rem;

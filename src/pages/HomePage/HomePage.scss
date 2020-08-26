@@ -1,114 +1,152 @@
-*{
-    font-size: 10px; 
-    padding: 0; 
-    margin: 0; 
-    box-sizing: border-box;
+* {
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.header{
+.header {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background-size: cover;
+  background-position: top;
+  z-index: 0;
+
+  &__info-film {
+    position: absolute;
+    left: 13.6rem;
+    top: 8rem;
+    z-index: 4;
+  }
+
+  &__poster-hot-film {
+    display: grid;
+    grid-template-columns: 14% 14% 14% 14% 14% 14%;
+    position: absolute;
+    bottom: 1.6rem;
+    left: 13.6rem;
+    grid-column-gap: 5.2rem;
+    z-index: 5;
+  }
+
+  &__background-black--left {
+    z-index: 2;
     height: 100vh;
+    width: 40%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 1) 78%,
+      rgba(255, 255, 255, 0) 94%
+    );
+  }
+
+  &__background-black--bottom {
+    z-index: 3;
+    height: 17vh;
     width: 100%;
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.916702) 29%,
+      rgba(205, 204, 204, 0.1) 60%
+    );
+  }
+
+  &__background-img {
+    position: absolute;
     background-size: cover;
     background-position: top;
-    z-index: 0;
+    width: 70%;
+    height: 100vh;
+    top: 0;
+    left: 30%;
+    z-index: 1;
+  }
 
-    &__info-film{
-        position: absolute; 
-        left: 13.6rem;
-        top: 8rem;
-        z-index: 4;
-    }
+  &__interact {
+    position: absolute;
+    left: 13.6rem;
+    top: 18.2rem;
+    z-index: 4;
 
-    &__poster-hot-film{
-        display: grid;
-        grid-template-columns: 14% 14% 14% 14% 14% 14%;
-        position: absolute; 
-        bottom: 1.6rem;
-        left: 13.6rem;
-        grid-column-gap: 5.2rem;
+    &-component {
+      height: 4.8rem;
+      width: 4.8rem;
+      position: relative;
+
+      &__img {
+        z-index: 6;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2rem;
+      }
+
+      &__btn {
+        height: 4.8rem;
+        width: 4.8rem;
+        border: none;
+        border-radius: 0.4rem;
+        position: absolute;
+        left: 0;
+        top: 0;
         z-index: 5;
-    }
 
-    &__background-black--left {
-        z-index: 2;
-        height: 100vh;
-        width: 40%;
-        position: absolute;
-        top: 0;
-        left: 0; 
-        background: rgb(0,0,0);
-        background: linear-gradient(90deg, rgba(0,0,0,1) 78%, rgba(255,255,255,0) 94%);
-    }
-
-    &__background-black--bottom {
-        z-index: 3;
-        height: 17vh;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0; 
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.916702) 29%, rgba(205, 204, 204, 0.1) 60%);
-    }
-
-    &__background-img{
-        position: absolute; 
-        background-size: cover; 
-        background-position: top;
-        width: 70%;
-        height: 100vh;
-        top: 0;
-        left: 30%;
-        z-index: 1;
-    }
-
-    &__interact{
-        position: absolute;
-        left: 13.6rem;
-        top: 18.2rem;
-        z-index: 4;
-
-        &-component{
-            height: 4.8rem;
-            width: 4.8rem;
-            position: relative;
- 
-            &__img{
-                z-index: 6;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 2rem;
-            }
-
-            &__btn{
-                height: 4.8rem;
-                width: 4.8rem; 
-                border: none;
-                border-radius: 0.4rem;
-                position: absolute;
-                left: 0;
-                top: 0;
-                z-index: 5;
-
-                &--orange__black{
-                    background-color: #B63E2A;
-                }
-
-                &--orange__light{
-                    background-color: #F25238;
-                }
-            }   
+        &--orange__black {
+          background-color: #b63e2a;
         }
+
+        &--orange__light {
+          background-color: #f25238;
+        }
+      }
     }
 
-    &__description{
-        position: absolute;
-        left: 13.6rem;
-        top: 24.2rem;
-        z-index: 4;
-        width: 25%;
-        color: #B0B0B0;
+    &-component:hover {
+      opacity: 0.7;
+      cursor: pointer;
     }
+  }
+
+  &__description {
+    position: absolute;
+    left: 13.6rem;
+    top: 24.2rem;
+    z-index: 4;
+    width: 25%;
+    color: #b0b0b0;
+  }
+}
+
+.modal-video{
+  position: fixed;
+  z-index: 6;
+  left: 0%;
+  top: 0%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+
+  &-movie-wrap{
+    padding-bottom: 0;
+  
+    & iframe{
+      position: fixed;
+      z-index: 7;
+      left: 50%;
+      top: -10%;
+      transform: translate(-50%, 50%);
+      width: 80rem;
+      height: 40rem;
+    }
+  }
+
 }
