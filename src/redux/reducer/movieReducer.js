@@ -15,7 +15,11 @@ const initialState = {
 
     currentFilmHot: {}, 
 
-    isLoading: true
+    isLoading: true, 
+    
+    trailer: null,
+
+    isOpenHot: false
 }
 
 const movieReducer = (state = initialState, action) => {
@@ -50,13 +54,31 @@ const movieReducer = (state = initialState, action) => {
             listFilmHotTemp.splice(0, listFilmHotTemp.length - 6); 
             state.listFilmHot = listFilmHotTemp; 
             state.currentFilmHot = listFilmHotTemp[0];
-
+            state.trailer = listFilmHotTemp[0].trailer;
             state.isLoading = false;
             return {...state};
         }
 
         case ActionType.CHANGE_CURRENT_HOT_FILM: {
             state.currentFilmHot = {...action.data};
+            return {...state};
+        }
+
+        case ActionType.TURN_ON_TRAILER_HOT: {
+            state.isOpenHot = true;
+
+            return {...state};
+        }
+
+        case ActionType.TURN_OFF_TRAILER_HOT: {
+            state.isOpenHot = false;
+
+            return {...state};
+        }
+
+        case ActionType.CHANGE_TRAILER: {
+            state.trailer = action.data; 
+
             return {...state};
         }
 

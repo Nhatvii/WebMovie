@@ -2,38 +2,85 @@ import React from "react";
 import "./CardFilm.scss";
 import { connect } from "react-redux";
 import * as action from "../../../redux/action/action";
-import "../scss/amination.scss";
-import '../scss/ultility.scss'; 
+
 function CardFilm(props) {
-  const { hinhAnh, tenPhim } = props.film;
+  const { film } = props;
+
+  const convertToDate = (dateString) => {
+    let date = new Date(dateString + "Z");
+    return date.toLocaleDateString();
+  };
 
   return (
-    <div
-      className= {props.posterHotFilmFade ? "card u-fade--nothing" : "card"}
-      onClick={() => {
-        props.changeCurrentHotFilm(props.film);
-        props.turnOnFadeHotFilm();
-      }}
-      onAnimationEnd={() => props.turnOffFadeHotFilm()}
-    >
-      <img src={hinhAnh} alt={tenPhim} className="card__img" />
-      <div className="card__name">{tenPhim}</div>
+    <div className="card-film">
+      <div className="card-film--front">
+        <img
+          className="card-film--front__hinhAnh"
+          src={film.hinhAnh}
+          alt={film.tenPhim}
+        />
+        <div className="card-film--front__rule-age">
+          <div className="card-film--front__rule-age__info">C13</div>
+        </div>
+        <div className="card-film--front__rating">
+          <img
+            src={process.env.PUBLIC_URL + "/img/star.png"}
+            alt="star"
+            className="card-film--front__rating__star u-inline-block"
+          />
+          <div className="card-film--front__rating__info u-inline-block">
+            {film.danhGia}
+          </div>
+        </div>
+
+        <div className="card-film--front__info">
+          <div className="card-film--front__info__tenPhim heading-sub-title--black">
+            {film.tenPhim}
+          </div>
+          <div className="card-film--front__info__ngayKhoiChieu">
+            {convertToDate(film.ngayKhoiChieu)}
+          </div>
+          <div className="card-film--front__info__thoiLuong">69:69</div>
+        </div>
+      </div>
+
+      <div className="card-film--back">
+        <div
+          className="card-film--back__play"
+          onClick={() => {
+            props.changeTrailer(film.trailer);
+            props.turnOnTrailer()}}
+        >
+          <img
+            className="card-film--back__play__img"
+            src={process.env.PUBLIC_URL + "/img/playCircle.png"}
+            alt="play"
+          />
+        </div>
+        <button className="card-film--back__btn">Đặt vé</button>
+      </div>
     </div>
   );
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (state) => {
   return {
-    changeCurrentHotFilm: (film) => dispatch(action.changeCurrentHotFilm(film)),
-    turnOnFadeHotFilm: () => dispatch(action.turnOnFadeHotFilm()),
-    turnOffFadeHotFilm: () => dispatch(action.turnOffFadeHotFilm()),
+    isOpen: state.movieReducer.isOpenHot,
   };
 };
 
-const mapStateToProps = (state) => {
-    return {
-        posterHotFilmFade: state.aminationReducer.posterHotFilmFade
-    }
-}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    turnOffTrailer: () => {
+      dispatch(action.turnOffTrailerHot());
+    },
+    turnOnTrailer: () => {
+      dispatch(action.turnOnTrailerHot());
+    },
+    changeTrailer: (trailer) => {
+      dispatch(action.changeTrailer(trailer));
+    },
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardFilm);

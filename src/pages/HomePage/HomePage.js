@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Modal, ModalBody } from "reactstrap";
 import * as action from "../../redux/action/action";
+import CardHotFilm from "./component/CardHotFilm";
 import CardFilm from "./component/CardFilm";
 import ModalVideo from "react-modal-video";
 import "./HomePage.scss";
@@ -10,9 +10,12 @@ import "./scss/ultility.scss";
 import "./scss/amination.scss";
 
 function HomePage(props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isChosenLeft, setIsChosenLeft] = useState(true);
 
-  const toggle = () => setIsOpen(!isOpen);
+  const [statusOfCurrentFilm, setStatusOfCurrentFilm] = useState({
+    startIndexOfDangChieu: 0,
+    startIndexOfSapChieu: 0,
+  });
 
   const {
     listFilmHot,
@@ -21,14 +24,89 @@ function HomePage(props) {
     currentFilmHot,
   } = props;
 
-  const renderHotFilms = () =>
-    props.listFilmHot.map((ele, index) => {
-      return <CardFilm key={index} film={ele} />;
+  const renderHotFilms = () => {
+    return listFilmHot.map((ele, index) => {
+      return <CardHotFilm film={ele} key={index} />;
     });
+  };
+
+  const renderFilmShow = (startIndex, isDangChieu, numberEle) => {
+    let array = [];
+    if (isDangChieu) {
+      array = [...listFilmDangChieu];
+    } else {
+      array = [...listFilmSapChieu];
+    }
+
+    let arrayResult = [];
+
+    if (array.length > 0) {
+      for (let i = startIndex; i < startIndex + numberEle; i++) {
+        if (i === array.length) break;
+        arrayResult.push(<CardFilm film={array[i]} key={i} />);
+      }
+    }
+
+    return arrayResult;
+  };
 
   const convertToDate = (dateString) => {
     let date = new Date(dateString + "Z");
     return date.toLocaleDateString();
+  };
+
+  const swipeLeftListFilm = (numberEle) => {
+    let obj = { ...statusOfCurrentFilm };
+
+    if (isChosenLeft) {
+      if (obj.startIndexOfDangChieu === 0) {
+        let remain = listFilmDangChieu.length % numberEle;
+        if (remain === 0) {
+          obj.startIndexOfDangChieu = listFilmDangChieu.length - numberEle;
+        } else {
+          obj.startIndexOfDangChieu = listFilmDangChieu.length - remain;
+        }
+        setStatusOfCurrentFilm(obj);
+      } else {
+        obj.startIndexOfDangChieu -= numberEle;
+        setStatusOfCurrentFilm(obj);
+      }
+    } else {
+      if (obj.startIndexOfSapChieu < 0) {
+        let remain = listFilmSapChieu.length % numberEle;
+        if (remain === 0) {
+          obj.startIndexOfSapChieu = listFilmSapChieu.length - numberEle;
+        } else {
+          obj.startIndexOfSapChieu = listFilmSapChieu.length - remain;
+        }
+        setStatusOfCurrentFilm(obj);
+      } else {
+        obj.startIndexOfSapChieu -= numberEle;
+        setStatusOfCurrentFilm(obj);
+      }
+    }
+  };
+
+  const swipeRightListFilm = (numberEle) => {
+    let obj = { ...statusOfCurrentFilm };
+
+    if (isChosenLeft) {
+      if (obj.startIndexOfDangChieu + numberEle >= listFilmDangChieu.length) {
+        obj.startIndexOfDangChieu = 0;
+        setStatusOfCurrentFilm(obj);
+      } else {
+        obj.startIndexOfDangChieu += numberEle;
+        setStatusOfCurrentFilm(obj);
+      }
+    } else {
+      if (obj.startIndexOfSapChieu + numberEle >= listFilmSapChieu.length) {
+        obj.startIndexOfSapChieu = 0;
+        setStatusOfCurrentFilm(obj);
+      } else {
+        obj.startIndexOfSapChieu += numberEle;
+        setStatusOfCurrentFilm(obj);
+      }
+    }
   };
 
   useEffect(() => {
@@ -83,7 +161,10 @@ function HomePage(props) {
             />
             <button
               className="header__interact-component__btn header__interact-component__btn--orange__black"
-              onClick={() => setIsOpen(true)}
+              onClick={() => {
+                props.changeTrailer(currentFilmHot.trailer);
+                props.turnOnTrailerHot();
+              }}
             />
           </div>
           <div className="header__interact-component u-inline-block">
@@ -108,11 +189,81 @@ function HomePage(props) {
           Object.keys(currentFilmHot).length === 0 &&
           currentFilmHot.constructor === Object
         ) ? (
-          <ModalVideo channel='youtube' isOpen={isOpen} videoId={currentFilmHot.trailer.slice(currentFilmHot.trailer.lastIndexOf("/") + 1, currentFilmHot.trailer.length)} onClose={() => setIsOpen(false)}/>
+          <ModalVideo
+            channel="youtube"
+            isOpen={props.isOpenHot}
+            videoId={props.trailer.slice(
+              props.trailer.lastIndexOf("/") + 1,
+              props.trailer.length
+            )}
+            onClose={() => props.turnOffTrailerHot()}
+          />
         ) : (
           <div />
         )}
       </header>
+      <section className="section-list-film">
+        <div className="section-list-film__category">
+          <div
+            className={
+              isChosenLeft
+                ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
+                : "section-list-film__category__component u-inline-block"
+            }
+            onClick={() => setIsChosenLeft(true)}
+          >
+            Đang Chiếu
+            {isChosenLeft ? (
+              <div className="section-list-film__category__component__line" />
+            ) : (
+              <div />
+            )}
+          </div>
+          <div
+            className={
+              !isChosenLeft
+                ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
+                : "section-list-film__category__component u-inline-block"
+            }
+            onClick={() => setIsChosenLeft(false)}
+          >
+            Sắp chiếu
+            {!isChosenLeft ? (
+              <div className="section-list-film__category__component__line" />
+            ) : (
+              <div />
+            )}
+          </div>
+        </div>
+        <div className="section-list-film__list">
+          {renderFilmShow(
+            isChosenLeft
+              ? statusOfCurrentFilm.startIndexOfDangChieu
+              : statusOfCurrentFilm.startIndexOfSapChieu,
+            isChosenLeft,
+            6
+          )}
+        </div>
+        <img
+          className="section-list-film__arrowLeft"
+          src={process.env.PUBLIC_URL + "/img/arrowLeft.png"}
+          alt="arrowLeft"
+          onClick={() => {
+            swipeLeftListFilm(6);
+          }}
+        ></img>
+        <img
+          className="section-list-film__arrowRight"
+          src={process.env.PUBLIC_URL + "/img/arrowRight.png"}
+          alt="arrowRight"
+          onClick={() => {
+            swipeRightListFilm(6);
+          }}
+        ></img>
+      </section>
+      <section className="section-list-theatre">
+        </section>    
+      
     </div>
   );
 }
@@ -125,6 +276,8 @@ const mapStateToProps = (state) => {
     currentFilmHot: state.movieReducer.currentFilmHot,
     isLoading: state.movieReducer.isLoading,
     posterHotFilmFade: state.aminationReducer.posterHotFilmFade,
+    isOpenHot: state.movieReducer.isOpenHot,
+    trailer: state.movieReducer.trailer,
   };
 };
 
@@ -132,6 +285,18 @@ const mapDispatchToProps = (dispatch) => {
   return {
     callToGetListFilm: () => {
       dispatch(action.getListMovieAPI());
+    },
+
+    turnOnTrailerHot: () => {
+      dispatch(action.turnOnTrailerHot());
+    },
+
+    turnOffTrailerHot: () => {
+      dispatch(action.turnOffTrailerHot());
+    },
+
+    changeTrailer: (trailer) => {
+      dispatch(action.changeTrailer(trailer));
     },
   };
 };

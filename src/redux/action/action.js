@@ -5,7 +5,7 @@ export const getListMovieAPI = () => {
     return (dispatch) => {
         Axios({
             method: "GET", 
-            url: "http://movie0706.cybersoft.edu.vn/api/QuanLyPhim/LayDanhSachPhim?maNhom=GP04"
+            url: "http://movie0706.cybersoft.edu.vn/api/QuanLyPhim/LayDanhSachPhim?maNhom=GP06"
         })
         .then((rs) => {
             dispatch(getListMovie(rs.data));
@@ -39,5 +39,24 @@ export const turnOnFadeHotFilm = () =>{
 export const turnOffFadeHotFilm = () =>{
     return{
         type: ActionType.TURN_OFF_FADE_POSTER_HOT_FILM
+    }
+}
+
+export const turnOnTrailerHot = () =>{
+    return{
+        type: ActionType.TURN_ON_TRAILER_HOT 
+    }
+}
+
+export const turnOffTrailerHot = () =>{
+    return{
+        type: ActionType.TURN_OFF_TRAILER_HOT 
+    }
+}
+
+export const changeTrailer = (trailer) =>{
+    return{
+        type: ActionType.CHANGE_TRAILER, 
+        data: trailer
     }
 }
