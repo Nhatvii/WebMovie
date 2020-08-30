@@ -13,12 +13,15 @@ const initialState = {
 
     ],
 
+
+    cumRap: {
+        list:[], 
+        currentLogo: ""
+    },
+
     currentFilmHot: {}, 
-
     isLoading: true, 
-    
     trailer: null,
-
     isOpenHot: false
 }
 
@@ -81,7 +84,7 @@ const movieReducer = (state = initialState, action) => {
 
             return {...state};
         }
-
+        
         default: return {...state};
 
     }

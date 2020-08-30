@@ -4,11 +4,14 @@ import * as action from "../../redux/action/action";
 import CardHotFilm from "./component/CardHotFilm";
 import CardFilm from "./component/CardFilm";
 import ModalVideo from "react-modal-video";
+import Axios from "axios";
 import "./HomePage.scss";
 import "./scss/typho.scss";
 import "./scss/ultility.scss";
 import "./scss/amination.scss";
-
+import Rap from "./component/Rap";
+import useDidMountEffect from "./customHook/useDidMountEffect";
+import LichChieu from "./component/LichChieu";
 function HomePage(props) {
   const [isChosenLeft, setIsChosenLeft] = useState(true);
 
@@ -17,6 +20,14 @@ function HomePage(props) {
     startIndexOfSapChieu: 0,
   });
 
+  const [cumRap, setCumRap] = useState({ list: [], maHeThongRap: "" });
+  const [listRapTheoHeThongRap, setListRapTheoHeThongRap] = useState({
+    list: [],
+    active: "",
+  });
+
+  const [lichChieu, setLichChieu] = useState([]);
+
   const {
     listFilmHot,
     listFilmDangChieu,
@@ -24,9 +35,89 @@ function HomePage(props) {
     currentFilmHot,
   } = props;
 
+  const changeStateActiveRap = (ele) => {
+    const listRapTheoHeThongRapTemp = { ...listRapTheoHeThongRap };
+    listRapTheoHeThongRapTemp.active = ele;
+    setListRapTheoHeThongRap(listRapTheoHeThongRapTemp);
+    callGetListLichChieuAPI(cumRap.maHeThongRap, listRapTheoHeThongRap.active);
+  };
+
+  async function callGetListRapTheoHeThongRap(maRap) {
+    const response = await Axios({
+      method: "GET",
+      url: `http://movie0706.cybersoft.edu.vn/api/QuanLyRap/LayThongTinCumRapTheoHeThong?maHeThongRap=${maRap}`,
+    });
+    const listRapTheoHeThongRapTemp = { ...listRapTheoHeThongRap };
+    listRapTheoHeThongRapTemp.list = response.data;
+    listRapTheoHeThongRapTemp.active = response.data[0].maCumRap;
+    setListRapTheoHeThongRap(listRapTheoHeThongRapTemp);
+  }
+
+  const callGetListLichChieuAPI = async (maHeThongRap, maCumRap) => {
+    const response = await Axios({
+      method: "GET",
+      url: `http://movie0706.cybersoft.edu.vn/api/QuanLyRap/LayThongTinLichChieuHeThongRap?maHeThongRap=${maHeThongRap}&maNhom=GP06`,
+    });
+
+    const list = [...response.data[0].lstCumRap];
+    let lichChieuTemp = [];
+    for(let i = 0; i < list.length ; i++){
+      if(list[i].maCumRap === maCumRap){
+        lichChieuTemp = [...list[i].danhSachPhim];
+      }
+    }
+    setLichChieu(lichChieuTemp);
+  };
+
+  const renderLichChieu = () =>{
+    return lichChieu.map((ele, index) =>{
+      return <LichChieu film = {ele} key = {index}/>
+    })
+  }
+
   const renderHotFilms = () => {
     return listFilmHot.map((ele, index) => {
       return <CardHotFilm film={ele} key={index} />;
+    });
+  };
+
+  const renderCumRap = () => {
+    return cumRap.list.map((ele, index) => {
+      return (
+        <div
+          className={
+            ele.maHeThongRap === cumRap.maHeThongRap
+              ? "section-list-theatre__table__list-cum-rap__component section-list-theatre__table__list-cum-rap__component--active"
+              : "section-list-theatre__table__list-cum-rap__component"
+          }
+          key={index}
+          onClick={() => {
+            callGetListRapTheoHeThongRap(ele.maHeThongRap);
+            const cumRapTemp = { ...cumRap };
+            cumRapTemp.maHeThongRap = ele.maHeThongRap;
+            setCumRap(cumRapTemp);
+          }}
+        >
+          <img
+            src={ele.logo}
+            alt={ele.tenHeThongRap}
+            className="section-list-theatre__table__list-cum-rap__component__img"
+          />
+        </div>
+      );
+    });
+  };
+
+  const renderCacRapTheoCumRap = () => {
+    return listRapTheoHeThongRap.list.map((ele, index) => {
+      return (
+        <Rap
+          rap={ele}
+          key={index}
+          active={ele.maCumRap === listRapTheoHeThongRap.active ? "active" : ""}
+          functionPass={changeStateActiveRap}
+        />
+      );
     });
   };
 
@@ -109,8 +200,30 @@ function HomePage(props) {
     }
   };
 
+  useDidMountEffect(() => {
+    callGetListRapTheoHeThongRap(cumRap.list[0].maHeThongRap);
+  }, [cumRap.list]);
+
+  useDidMountEffect(() =>{
+    callGetListLichChieuAPI(cumRap.maHeThongRap, listRapTheoHeThongRap.list[0].maCumRap); 
+  }, [listRapTheoHeThongRap.list])
+
   useEffect(() => {
     props.callToGetListFilm();
+    async function callApiHeThongRap() {
+      const response = await Axios({
+        method: "GET",
+        url:
+          "http://movie0706.cybersoft.edu.vn/api/QuanLyRap/LayThongTinHeThongRap",
+      });
+
+      const listRap = { ...cumRap };
+      listRap.list = response.data;
+      listRap.maHeThongRap = listRap.list[0].maHeThongRap;
+      await setCumRap(listRap);
+    }
+
+    callApiHeThongRap();
   }, []);
 
   return (
@@ -262,8 +375,22 @@ function HomePage(props) {
         ></img>
       </section>
       <section className="section-list-theatre">
-        </section>    
-      
+        <div className="section-list-theatre__heading">
+          Lịch chiếu rạp hôm nay
+        </div>
+
+        <div className="section-list-theatre__table">
+          <div className="section-list-theatre__table__list-cum-rap">
+            {renderCumRap()}
+          </div>
+          <div className="section-list-theatre__table__list-rap">
+            {renderCacRapTheoCumRap()}
+          </div>
+          <div className="section-list-theatre__table__list-lichChieu">
+            {renderLichChieu()}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
