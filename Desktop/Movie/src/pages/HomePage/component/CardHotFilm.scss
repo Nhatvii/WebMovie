@@ -1,0 +1,25 @@
+.card{
+    display: inline-block;
+    transition: all 0.2s;
+    cursor: pointer;
+    padding-left: 3.2rem;
+    &__img{
+        margin-top: 6.5rem;
+        width: 15rem;
+        height: 20rem;
+        border-radius: 1rem;
+        box-shadow: 0 1.5rem 4rem rgba(#000, 0.15);
+        margin-bottom: 0.8rem;
+    }
+
+    &__name{
+        font-size: 1.6rem;
+        width: 15rem;
+        text-align: center;
+        color: #FFF;
+    }
+
+    &:hover {
+        transform: scale(1.2) translateY(-.5rem) translateX(-0.4rem); 
+    }
+}
