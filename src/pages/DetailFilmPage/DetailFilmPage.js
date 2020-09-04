@@ -130,5 +130,4 @@ const mapDispatchToProps = (dispatch) => {
         },
     }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(DetailFilmPage);
+export default connect(mapStateToProps, mapDispatchToProps) (DetailFilmPage);
