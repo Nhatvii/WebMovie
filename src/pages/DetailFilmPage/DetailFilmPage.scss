@@ -1,0 +1,90 @@
+*{
+    padding:0px;
+    margin:0px;
+}
+.Detail{
+    &__background{
+        z-index: 0;
+    }
+    &__description{
+        width: 90%;
+        height: 660px;
+        display: flex;
+        &__background{
+            z-index: 1;
+        }
+        > img{
+            width: 30%;
+            height: auto;
+            background-size: cover;
+            background-position: center;
+            margin-top: 67px;
+            margin-left: 120px;
+            margin-bottom: 110px;
+            border-radius: 10px;
+            z-index: 2;
+        }
+        &__info{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px;
+            width: 70%;
+            margin-top: -160px;
+            z-index: 2;
+            &__launch-time{
+                font-size: 20px;
+                color: #B0B0B0;
+            }
+            &__time{
+                font-size: 20px;
+                color:#B0B0B0;
+
+            }
+            &__movie-name{
+                font-weight: bold;
+                font-size: 45px;
+                color: #FFFF;
+            }
+            &__btn-ticket{
+                width: 84px;
+                height: 35px;
+                font-size: 17px;
+                font-weight: bold;
+                border: 1px solid #F25238;
+                border-radius: 5px ;
+                background-color: #F25238;
+                color: #FFFF;
+            }
+        }
+
+        &__rate{
+            width: 20%;
+            height: 50%;
+            display: flex;
+            padding-left: 276px;
+            z-index: 2;
+            > img{
+                width: 30px;
+                height: 30px;
+                margin-top: 175px;
+            }
+            > div{
+                font-size: 60px;
+                margin-top: 143px;
+            }
+        }
+    }
+}
+.MuiTabs-flexContainer{
+    justify-content: center;
+    
+}
+.PrivateTabIndicator-colorSecondary-4 {
+    background-color: #F25238;
+}
+
+.MuiTab-textColorInherit {
+    margin: 0 20px;
+    opacity: 0.7;
+}

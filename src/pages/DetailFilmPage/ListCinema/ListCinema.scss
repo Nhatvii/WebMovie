@@ -1,0 +1,56 @@
+.ListCinema{
+    margin-top: 25px;
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    display: flex;
+    &__logo{
+        width: 10%;
+        > a > img{
+            width: 60px;
+            height: 60px;
+            margin: 40px 40px;
+        }
+    }
+    &__timeSchedule{
+        width: 90%;
+        height: 100%;
+        &__date{
+            height: 20%;
+        }
+        &__info{
+            height: 80%;
+            width: 90%;
+            overflow: auto;
+            &__detail{
+                width: 100%;
+                padding: 20px;
+                border: 1px solid gainsboro;
+                &__info{
+                    display: flex;
+                    > img{
+                        width: 40px;
+                        height: 40px;
+                    }
+                    &__address{
+                        margin-left: 30px;
+                        margin-top: 8px;
+                    }
+                    &__format{
+                        font-weight: bold;
+                        font-size: 13px;
+                    }
+                }
+                &__time{
+                    padding: 20px;
+                    > a{
+                        border: 1px solid gainsboro;
+                        border-radius: 3px;
+                        padding: 10px 25px;
+                        margin: 10px 25px;
+                        color: gainsboro;
+                    }
+                }
+            }
+        }
+    }
+}
