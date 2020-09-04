@@ -13,7 +13,7 @@ function CardFilm(props) {
 
   return (
     <div className="card-film">
-      <div className="card-film--front">
+      <div className="card-film-side card-film--front">
         <img
           className="card-film--front__hinhAnh"
           src={film.hinhAnh}
@@ -44,7 +44,7 @@ function CardFilm(props) {
         </div>
       </div>
 
-      <div className="card-film--back">
+      <div className="card-film-side card-film--back">
         <div
           className="card-film--back__play"
           onClick={() => {

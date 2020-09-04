@@ -5,7 +5,7 @@ export const getListMovieAPI = () => {
     return (dispatch) => {
         Axios({
             method: "GET", 
-            url: "http://movie0706.cybersoft.edu.vn/api/QuanLyPhim/LayDanhSachPhim?maNhom=GP01"
+            url: "http://movie0706.cybersoft.edu.vn/api/QuanLyPhim/LayDanhSachPhim?maNhom=GP10"
         })
         .then((rs) => {
             dispatch(getListMovie(rs.data));

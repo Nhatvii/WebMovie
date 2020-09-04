@@ -12,8 +12,17 @@ import "./scss/amination.scss";
 import Rap from "./component/Rap";
 import useDidMountEffect from "./customHook/useDidMountEffect";
 import LichChieu from "./component/LichChieu";
+import useMediaQuery from "react-hook-media-query";
+import { Link } from "react-router-dom";
+import NavBar from "../Navbar/NavBar";
+import ScrollableAnchor, { configureAnchors } from "react-scrollable-anchor";
+
 function HomePage(props) {
   const [isChosenLeft, setIsChosenLeft] = useState(true);
+  const isShown4Films = useMediaQuery("(max-width: 1295px)");
+  const isShown2Films = useMediaQuery("(max-width: 995px)");
+
+  const [numberOfShownFilm, setNumberOfShownFilm] = useState(6);
 
   const [statusOfCurrentFilm, setStatusOfCurrentFilm] = useState({
     startIndexOfDangChieu: 0,
@@ -39,7 +48,6 @@ function HomePage(props) {
     const listRapTheoHeThongRapTemp = { ...listRapTheoHeThongRap };
     listRapTheoHeThongRapTemp.active = ele;
     setListRapTheoHeThongRap(listRapTheoHeThongRapTemp);
-    callGetListLichChieuAPI(cumRap.maHeThongRap, listRapTheoHeThongRap.active);
   };
 
   async function callGetListRapTheoHeThongRap(maRap) {
@@ -61,19 +69,19 @@ function HomePage(props) {
 
     const list = [...response.data[0].lstCumRap];
     let lichChieuTemp = [];
-    for(let i = 0; i < list.length ; i++){
-      if(list[i].maCumRap === maCumRap){
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].maCumRap === maCumRap) {
         lichChieuTemp = [...list[i].danhSachPhim];
       }
     }
     setLichChieu(lichChieuTemp);
   };
 
-  const renderLichChieu = () =>{
-    return lichChieu.map((ele, index) =>{
-      return <LichChieu film = {ele} key = {index}/>
-    })
-  }
+  const renderLichChieu = () => {
+    return lichChieu.map((ele, index) => {
+      return <LichChieu film={ele} key={index} />;
+    });
+  };
 
   const renderHotFilms = () => {
     return listFilmHot.map((ele, index) => {
@@ -122,6 +130,7 @@ function HomePage(props) {
   };
 
   const renderFilmShow = (startIndex, isDangChieu, numberEle) => {
+    console.log(numberEle);
     let array = [];
     if (isDangChieu) {
       array = [...listFilmDangChieu];
@@ -204,9 +213,12 @@ function HomePage(props) {
     callGetListRapTheoHeThongRap(cumRap.list[0].maHeThongRap);
   }, [cumRap.list]);
 
-  useDidMountEffect(() =>{
-    callGetListLichChieuAPI(cumRap.maHeThongRap, listRapTheoHeThongRap.list[0].maCumRap); 
-  }, [listRapTheoHeThongRap.list])
+  useDidMountEffect(() => {
+    callGetListLichChieuAPI(
+      cumRap.maHeThongRap,
+      listRapTheoHeThongRap.list[0].maCumRap
+    );
+  }, [listRapTheoHeThongRap.list]);
 
   useEffect(() => {
     props.callToGetListFilm();
@@ -222,9 +234,31 @@ function HomePage(props) {
       listRap.maHeThongRap = listRap.list[0].maHeThongRap;
       await setCumRap(listRap);
     }
+    configureAnchors({offset: 0, scrollDuration: 3000})
 
     callApiHeThongRap();
   }, []);
+
+  useEffect(() => {
+    callGetListLichChieuAPI(cumRap.maHeThongRap, listRapTheoHeThongRap.active);
+  }, [listRapTheoHeThongRap]);
+
+  useEffect(() => {
+    if (isShown2Films) {
+      setNumberOfShownFilm(2);
+    } else {
+      setNumberOfShownFilm(4);
+    }
+  }, [isShown2Films]);
+
+  useEffect(() => {
+    if (isShown4Films) {
+      setNumberOfShownFilm(4);
+    } else {
+      setNumberOfShownFilm(6);
+    }
+  }, [isShown4Films]);
+
 
   return (
     <div className="container">
@@ -252,7 +286,9 @@ function HomePage(props) {
             {currentFilmHot.danhGia}
           </div>
         </div>
-        <div className="header__poster-hot-film">{renderHotFilms()}</div>
+        <div className="header__poster-hot-film" id="style-navbar">
+          {renderHotFilms()}
+        </div>
         <div className="header__background-black--left"></div>
         <div className="header__background-black--bottom"></div>
         <div
@@ -315,66 +351,72 @@ function HomePage(props) {
           <div />
         )}
       </header>
-      <section className="section-list-film">
-        <div className="section-list-film__category">
-          <div
-            className={
+      <NavBar />
+
+      <ScrollableAnchor id={"list-film"}>
+        <section className="section-list-film" id="list-film">
+          <div className="section-list-film__category">
+            <div
+              className={
+                isChosenLeft
+                  ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
+                  : "section-list-film__category__component u-inline-block"
+              }
+              onClick={() => setIsChosenLeft(true)}
+            >
+              Đang Chiếu
+              {isChosenLeft ? (
+                <div className="section-list-film__category__component__line" />
+              ) : (
+                <div />
+              )}
+            </div>
+            <div
+              className={
+                !isChosenLeft
+                  ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
+                  : "section-list-film__category__component u-inline-block"
+              }
+              onClick={() => setIsChosenLeft(false)}
+            >
+              Sắp chiếu
+              {!isChosenLeft ? (
+                <div className="section-list-film__category__component__line" />
+              ) : (
+                <div />
+              )}
+            </div>
+          </div>
+          <div className="section-list-film__list">
+            {renderFilmShow(
               isChosenLeft
-                ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
-                : "section-list-film__category__component u-inline-block"
-            }
-            onClick={() => setIsChosenLeft(true)}
-          >
-            Đang Chiếu
-            {isChosenLeft ? (
-              <div className="section-list-film__category__component__line" />
-            ) : (
-              <div />
+                ? statusOfCurrentFilm.startIndexOfDangChieu
+                : statusOfCurrentFilm.startIndexOfSapChieu,
+              isChosenLeft,
+              numberOfShownFilm
             )}
           </div>
-          <div
-            className={
-              !isChosenLeft
-                ? "section-list-film__category__component section-list-film__category__component--active u-inline-block"
-                : "section-list-film__category__component u-inline-block"
-            }
-            onClick={() => setIsChosenLeft(false)}
-          >
-            Sắp chiếu
-            {!isChosenLeft ? (
-              <div className="section-list-film__category__component__line" />
-            ) : (
-              <div />
-            )}
-          </div>
-        </div>
-        <div className="section-list-film__list">
-          {renderFilmShow(
-            isChosenLeft
-              ? statusOfCurrentFilm.startIndexOfDangChieu
-              : statusOfCurrentFilm.startIndexOfSapChieu,
-            isChosenLeft,
-            6
-          )}
-        </div>
-        <img
-          className="section-list-film__arrowLeft"
-          src={process.env.PUBLIC_URL + "/img/arrowLeft.png"}
-          alt="arrowLeft"
-          onClick={() => {
-            swipeLeftListFilm(6);
-          }}
-        ></img>
-        <img
-          className="section-list-film__arrowRight"
-          src={process.env.PUBLIC_URL + "/img/arrowRight.png"}
-          alt="arrowRight"
-          onClick={() => {
-            swipeRightListFilm(6);
-          }}
-        ></img>
-      </section>
-      <section className="section-list-theatre">
+          <img
+            className="section-list-film__arrow section-list-film__arrowLeft"
+            src={process.env.PUBLIC_URL + "/img/arrowLeft.png"}
+            alt="arrowLeft"
+            onClick={() => {
+              swipeLeftListFilm(numberOfShownFilm);
+            }}
+          ></img>
+          <img
+            className="section-list-film__arrow section-list-film__arrowRight"
+            src={process.env.PUBLIC_URL + "/img/arrowRight.png"}
+            alt="arrowRight"
+            onClick={() => {
+              swipeRightListFilm(numberOfShownFilm);
+            }}
+          ></img>
+        </section>
+      </ScrollableAnchor>
+      <ScrollableAnchor id={"list-theatre"}>
+
+      <section className="section-list-theatre" id="list-theatre">
         <div className="section-list-theatre__heading">
           Lịch chiếu rạp hôm nay
         </div>
@@ -391,6 +433,23 @@ function HomePage(props) {
           </div>
         </div>
       </section>
+      </ScrollableAnchor>
+ 
+      <footer className="footer">
+        <Link to="/aboutUs">
+          <div className="footer__about-us">About us</div>
+        </Link>
+        <div className="footer__copyright">
+          <img
+            className="footer__copyright__img u-inline-block"
+            src={process.env.PUBLIC_URL + "/img/copyright.png"}
+            alt="copyright"
+          ></img>
+          <div className="footer__copyright__info u-inline-block">
+            Copyright
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

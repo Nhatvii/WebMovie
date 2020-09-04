@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { Fragment } from "react";
+import { BrowserRouter, Route, Switch, useLocation } from "react-router-dom";
+import { Fragment} from "react";
 import NotFoundPage from "./pages/NotFoundPage";
 import route from './routing/route'; 
 import RoutingTemplate from "./Template/RoutingTemplate";
-
 function App() {
 
   const showMenuRouting = routes => {
