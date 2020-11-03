@@ -1,0 +1,32 @@
+.footer{
+    height: 12rem;
+    width: 100%;
+    position: relative;
+    background-color: #1A0806;
+    &__about-us{
+      position: absolute; 
+      right: 10rem;
+      top: 5rem; 
+      color:#F25238;
+      font-size: 2.4rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  
+    &__copyright{
+      position: absolute; 
+      left: 0.8rem;
+      top: 5rem;
+      display: flex;
+      width: 20rem;
+      height: 5rem; 
+      justify-content: center;
+      align-items: center;
+  
+      &__info{
+        font-size: 2.4rem;
+        color: #868281;
+        padding-left: 1rem;
+      }
+    }
+  }
